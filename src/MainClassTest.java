@@ -1,3 +1,4 @@
+import org.junit.Assert;
 import org.junit.Test;
 
 import static java.lang.String.*;
@@ -8,13 +9,26 @@ public class MainClassTest extends MainClass
     public void testGetLocalNumber()
     {
         int a = this.getLocalNumber();
-        if (a != 14)
+
+        if (a == 14)
         {
-            System.out.println(format("Тест провелен, отправлено %s, а должно быть 14", a));
+            System.out.println(format("Тест успешен: отправлено %s", a));
         } else
         {
-            System.out.println(format("Тест успешен, отправлено %s", a));
+            Assert.assertTrue(format("Тест провелен: отправлено %s, а должно быть 14", a), a == 14);
         }
 
-        }
+    }
+
+    @Test
+    public void testGetClassNumber()
+    {
+        int a = this.getClassNumber();
+
+        Assert.assertTrue(format("Тест провелен: число %s меньше 45", a), a > 45);
+
+
+    }
+
+
 }
