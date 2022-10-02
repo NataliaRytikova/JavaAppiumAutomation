@@ -127,10 +127,9 @@ public class MainClassTest {
 
         String title = "Object-oriented programming language";
 
-        assertElementPresent(
+        assertElementNotPresent(
                 By.id("org.wikipedia:id/view_page_title_text"),
-                "Java (programming language)",
-                "Didnt find title " + title
+                "Java (programming language)"
         );
     }
 
@@ -183,6 +182,13 @@ public class MainClassTest {
                 text,
                 textElement
         );
+    }
+
+    private void assertElementNotPresent(By by, String error_mesage)
+    {
+        if (driver.findElements(by).isEmpty()) {
+            Assert.assertTrue(error_mesage, false);
+        }
     }
 
     private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds)
