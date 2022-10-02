@@ -1,13 +1,10 @@
 package Lesson4.Test3;
-import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -15,7 +12,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
-import java.util.List;
 
 public class MainClassTest {
 
@@ -127,7 +123,7 @@ public class MainClassTest {
 
         String title = "Object-oriented programming language";
 
-        assertElementNotPresent(
+        assertElementPresent(
                 By.id("org.wikipedia:id/view_page_title_text"),
                 "Java (programming language)"
         );
@@ -172,19 +168,7 @@ public class MainClassTest {
         );
     }
 
-    private void assertElementPresent(By by, String text, String error_message) {
-
-        WebElement element = waitForElementPresent(by, error_message, 0);
-        String textElement = element.getText();
-
-        Assert. assertEquals(
-                error_message,
-                text,
-                textElement
-        );
-    }
-
-    private void assertElementNotPresent(By by, String error_mesage)
+    private void assertElementPresent(By by, String error_mesage)
     {
         if (driver.findElements(by).isEmpty()) {
             Assert.assertTrue(error_mesage, false);
