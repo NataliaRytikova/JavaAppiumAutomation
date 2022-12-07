@@ -1,184 +1,74 @@
 package Lesson4.Test3;
-import io.appium.java_client.android.AndroidDriver;
-import org.junit.After;
+import lib.CoreTestCase;
+import lib.ui.ArticlePageObject;
+import lib.ui.MainPageObject;
+import lib.ui.SearchPageObjest;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ScreenOrientation;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.net.URL;
+public class MainClassTest extends CoreTestCase {
 
-public class MainClassTest {
+    private lib.ui.MainPageObject MainPageObject;
 
-    private AndroidDriver driver;
-
-    @Before
-    public void setUp() throws Exception {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("deviceName", "adb80");
-        capabilities.setCapability("platformVersion", "8.0");
-        capabilities.setCapability("automationName", "Appium");
-        capabilities.setCapability("appPackage", "org.wikipedia");
-        capabilities.setCapability("appActivity", "main.MainActivity");
-        capabilities.setCapability("app", "/Users/n.rytikova/Desktop/JavaAppiumAutomation/apks/org.wikipedia.apk");
-
-        driver = new AndroidDriver(new URL("http://localhost:4723/wd/hub"), capabilities);
-    }
-
-    @After
-    public void tearDown()
+    protected void setUp() throws Exception
     {
-        driver.quit();
-    }
+        super.setUp();
 
+        MainPageObject = new MainPageObject(driver);
+    }
 
     @Test
     public void testChangeScreenOrientationOnSearchResults()
     {
-
-        waitForElementEndClick(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia' input",
-                5
-        );
-        assertElementHasText(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Search…",
-                "Cannot find 'Search…' input"
-        );
-
         String search_line = "Java";
+        String search_title = "Java (programming language)";
+        SearchPageObjest SearchPageObject = new SearchPageObjest(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.clickByArticleWithSubstring(search_title);
 
-        waitForElementEndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                search_line,
-                "Cannot find '" + search_line + "' input",
-                5
-        );
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        String title_before_rotation = ArticlePageObject.getArticleTitle();
 
-        waitForElementEndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Java (programming language)']"),
-                "Cannot find 'Java (programming language)' topic searching by " + search_line,
-                15
-        );
-/*
-        String title_before_rotation = waitForElementAndGetAttribute(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "text",
-                "Cannot find title of article",
-                15
-        );
-*/
-        driver.rotate(ScreenOrientation.LANDSCAPE);
+        this.rotateScreenLandscape();
 
-        String title_after_rotation = waitForElementAndGetAttribute(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "text",
-                "Cannot find title of article",
-                15
-        );
+        String title_after_rotation = ArticlePageObject.getArticleTitle();
 
         Assert.assertEquals(
                 "Article title have been changed after screen rotation",
-                "Java (programming language)",
+                title_before_rotation,
                 title_after_rotation
         );
+
+        this.rotateScreenPortrait();
+        String title_after_second_rotation = ArticlePageObject.getArticleTitle();
+
+        Assert.assertEquals(
+                "Article title have been changed after screen rotation",
+                title_after_rotation,
+                title_after_second_rotation
+        );
     }
+
+
 
     @Test
-    public void titleSearch()
+    public void testTitleSearch()
     {
-
-        waitForElementEndClick(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
-                "Cannot find 'Search Wikipedia' input",
-                5
-        );
-        assertElementHasText(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Search…",
-                "Cannot find 'Search…' input"
-        );
-
         String search_line = "Java";
+        String search_title = "Java (programming language)";
+        SearchPageObjest SearchPageObject = new SearchPageObjest(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.waitForSearchResult(search_title);
+        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
-        waitForElementEndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                search_line,
-                "Cannot find '" + search_line + "' input",
-                5
-        );
-
-        waitForElementEndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='Object-oriented programming language']"),
-                "Cannot find 'Object-oriented programming language' input",
-                10
-        );
-
-        String title = "Object-oriented programming language";
-
-        assertElementPresent(
+        MainPageObject.assertElementPresent(
                 By.id("org.wikipedia:id/view_page_title_text"),
-                "Java (programming language)"
+                search_title
         );
-    }
-
-
-
-    private WebElement waitForElementPresent(By by, String error_message, long timeOutInSecond)
-    {
-        WebDriverWait wait = new WebDriverWait(driver, timeOutInSecond);
-        wait.withMessage(error_message + "\n");
-        return wait.until(
-                ExpectedConditions.presenceOfElementLocated(by)
-        );
-    }
-
-    private WebElement waitForElementEndSendKeys(By by, String value, String error_message, long timeOutInSeconds)
-    {
-        WebElement element = waitForElementPresent(by, error_message, timeOutInSeconds);
-        element.sendKeys(value);
-        return element;
-    }
-
-
-
-    private WebElement waitForElementEndClick(By by, String error_message, long timeOutInSeconds)
-    {
-        WebElement element = waitForElementPresent(by, error_message, timeOutInSeconds);
-        element.click();
-        return element;
-    }
-
-    private void assertElementHasText(By by, String text, String error_message) {
-
-        WebElement element = waitForElementPresent(by, error_message, 10);
-        String textElement = element.getText();
-
-        Assert. assertEquals(
-                error_message,
-                text,
-                textElement
-        );
-    }
-
-    private void assertElementPresent(By by, String error_mesage)
-    {
-        if (driver.findElements(by).isEmpty()) {
-            Assert.assertTrue(error_mesage, false);
-        }
-    }
-
-    private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds)
-    {
-        WebElement element = waitForElementPresent(by, error_message,timeoutInSeconds);
-        return  element.getAttribute(attribute);
     }
 
 }
