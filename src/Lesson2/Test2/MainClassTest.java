@@ -1,11 +1,10 @@
-package Lesson4.Test2;
+package Lesson2.Test2;
 
 import lib.CoreTestCase;
 import lib.ui.MainPageObject;
 import lib.ui.SearchPageObjest;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 public class MainClassTest extends CoreTestCase {
 

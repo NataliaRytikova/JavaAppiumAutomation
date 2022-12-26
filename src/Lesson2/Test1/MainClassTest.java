@@ -1,4 +1,4 @@
-package Lesson4.Test1;
+package Lesson2.Test1;
 
 import lib.CoreTestCase;
 import lib.ui.*;

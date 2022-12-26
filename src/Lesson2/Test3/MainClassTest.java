@@ -1,4 +1,4 @@
-package Lesson4.Test3;
+package Lesson2.Test3;
 import lib.CoreTestCase;
 import lib.ui.ArticlePageObject;
 import lib.ui.MainPageObject;
@@ -6,7 +6,6 @@ import lib.ui.SearchPageObjest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ScreenOrientation;
 
 public class MainClassTest extends CoreTestCase {
 
@@ -64,11 +63,7 @@ public class MainClassTest extends CoreTestCase {
         SearchPageObject.typeSearchLine(search_line);
         SearchPageObject.waitForSearchResult(search_title);
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-
-        MainPageObject.assertElementPresent(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                search_title
-        );
+        SearchPageObject.assertElementTitlePresent();
     }
 
 }

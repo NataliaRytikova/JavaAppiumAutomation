@@ -2,13 +2,14 @@ package lib;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
 import junit.framework.TestCase;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
 
-public class CoreTestCase extends TestCase {
+public class iOSCoreTestCase extends TestCase {
     private static final String PLATFORM_IOS = "ios";
     private static final String PLATFORM_ANDROID = "android";
 
@@ -19,9 +20,9 @@ public class CoreTestCase extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        DesiredCapabilities capabilities = this.getCapabilitiesByPlatformEnv();
+        DesiredCapabilities capabilities = new DesiredCapabilities();
 
-        driver = new AndroidDriver(new URL(AppiumURL), capabilities);
+        driver = new IOSDriver(new URL(AppiumURL), capabilities);
         this.rotateScreenPortrait();
     }
 
