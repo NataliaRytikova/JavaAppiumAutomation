@@ -1,23 +1,34 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.junit.Assert;
-import org.openqa.selenium.By;
+import lib.Platform;
 import org.openqa.selenium.WebElement;
 
-public class ArticlePageObject extends MainPageObject {
-    private static final String
-    TITLE = "id:org.wikipedia:id/view_page_title_text",
-    FOOTER_ELEMENT = "xpath://*[@text='View page in browser']",
-    OPTIONS_BUTTON = "xpath://android.widget.ImageView[@content-desc='More options']",
-    OPTIONS_ADD_TO_MY_LIST_BUTTON = "xpath://*[@text='Add to reading list']",
-    ADD_TO_MY_LIST_OVERLAY = "id:org.wikipedia:id/onboarding_button",
-    MY_LIST_NAME_INPUT = "id:org.wikipedia:id/text_input",
-    MY_LIST_OK_BUTTON = "xpath://*[@text='OK']",
-    CLOSE_MY_LIST = "xpath://android.widget.ImageButton[@content-desc='Navigate up']";
+abstract public class ArticlePageObject extends MainPageObject {
+    protected static String
+    TITLE,
+    FOOTER_ELEMENT,
+    OPTIONS_BUTTON,
+    OPTIONS_ADD_TO_MY_LIST_BUTTON,
+    ADD_TO_MY_LIST_OVERLAY,
+    MY_LIST_NAME_INPUT,
+    MY_LIST_OK_BUTTON,
+    CLOSE_ARTICLE_BUTTON;
     public  ArticlePageObject(AppiumDriver driver)
     {
         super(driver);
+    }
+
+    private static final String getSavedArticleXpathByTitle(String article_title)
+    {
+        return TITLE.replace("{TITLE}",article_title);
+    }
+
+
+    public WebElement waitForTitleByNameElement(String article_title)
+    {
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
+        return this.waitForElementPresent(article_xpath, "Cannot find article title on page", 15);
     }
 
     public WebElement waitForTitleElement()
@@ -28,16 +39,26 @@ public class ArticlePageObject extends MainPageObject {
     public String getArticleTitle()
     {
         WebElement title_element = waitForTitleElement();
-        return title_element.getAttribute("text");
+        if (Platform.getInstance().isAndroid()) {
+            return title_element.getAttribute("text");
+        } else {
+            return title_element.getAttribute("name");
+        }
     }
 
     public void swipeTFooter()
     {
-        this.swipeUpToElement(
-                FOOTER_ELEMENT,
-                "Cannot find the end of article",
-                50
-        );
+        if (Platform.getInstance().isAndroid()) {
+            this.swipeUpToElement(
+                    FOOTER_ELEMENT,
+                    "Cannot find the end of article",
+                    50
+            );
+        } else {
+            this.swipeUpTillElementAppear(FOOTER_ELEMENT,
+            "Cannot find the end of article",
+            70);
+        }
     }
 
     public void addArticleToMyList(String name_of_folder){
@@ -80,10 +101,15 @@ public class ArticlePageObject extends MainPageObject {
 
     }
 
+    public void addArticleToMySaved()
+    {
+        this.waitForElementEndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find options to add article to reading list", 15);
+    }
+
     public void closeArticle()
     {
         this.waitForElementEndClick(
-                CLOSE_MY_LIST,
+                CLOSE_ARTICLE_BUTTON,
                 "Cannot close article",
                 5
         );

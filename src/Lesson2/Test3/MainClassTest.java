@@ -3,32 +3,24 @@ import lib.CoreTestCase;
 import lib.ui.ArticlePageObject;
 import lib.ui.MainPageObject;
 import lib.ui.SearchPageObjest;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 public class MainClassTest extends CoreTestCase {
-
-    private lib.ui.MainPageObject MainPageObject;
-
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
-        MainPageObject = new MainPageObject(driver);
-    }
 
     @Test
     public void testChangeScreenOrientationOnSearchResults()
     {
         String search_line = "Java";
         String search_title = "Java (programming language)";
-        SearchPageObjest SearchPageObject = new SearchPageObjest(driver);
+        SearchPageObjest SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(search_line);
         SearchPageObject.clickByArticleWithSubstring(search_title);
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         String title_before_rotation = ArticlePageObject.getArticleTitle();
 
         this.rotateScreenLandscape();
@@ -58,12 +50,11 @@ public class MainClassTest extends CoreTestCase {
     {
         String search_line = "Java";
         String search_title = "Java (programming language)";
-        SearchPageObjest SearchPageObject = new SearchPageObjest(driver);
+        SearchPageObjest SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(search_line);
         SearchPageObject.waitForSearchResult(search_title);
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
         SearchPageObject.assertElementTitlePresent();
     }
-
 }

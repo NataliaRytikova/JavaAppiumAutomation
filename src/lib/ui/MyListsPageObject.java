@@ -1,12 +1,13 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
+import lib.Platform;
 
-public class MyListsPageObject extends MainPageObject {
-    public static final String
-            FOLDER_BY_NAME_TPL = "xpath://*[@text='{FOLDER_NAME}']",
-            ARTICLE_BY_TITLE_TPL = "xpath://*[@text='{TITLE}']";
+abstract public class MyListsPageObject extends MainPageObject {
+    protected static String
+            FOLDER_BY_NAME_TPL,
+            CLOSE_DIALOG,
+            ARTICLE_BY_TITLE_TPL;
 
     private static final String getFolderXpathByName(String name_of_folder)
     {
@@ -35,7 +36,7 @@ public class MyListsPageObject extends MainPageObject {
 
     public void waitForArticleToApearByTitle(String article_title)
     {
-        String article_xpath = getFolderXpathByName(article_title);
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
         this.waitForElementPresent(
                 article_xpath,
                 "Cannot find saved article by title",
@@ -45,7 +46,7 @@ public class MyListsPageObject extends MainPageObject {
 
     public void waitForArticleToDissapearByTitle(String article_title)
     {
-        String article_xpath = getFolderXpathByName(article_title);
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
         this.waitForElementNotPresent(
                 article_xpath,
                 "Saved article still present with title " + article_title,
@@ -56,11 +57,20 @@ public class MyListsPageObject extends MainPageObject {
     public void swipeByArticleToDelete(String article_title)
     {
         this.waitForArticleToApearByTitle(article_title);
-        String article_xpath = getFolderXpathByName(article_title);
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
         this.swipeElementToLeft(
                 article_xpath,
                 "Cannot find saved article"
         );
+
+        if (Platform.getInstance().isIOS()){
+            this.clickElementToTheRightUpperCorner(article_xpath, "Cannot find saved article");
+        }
         this.waitForArticleToDissapearByTitle(article_title);
+    }
+
+    public void closeDialog()
+    {
+        this.waitForElementEndClick(CLOSE_DIALOG, "Cannot find dialog", 5);
     }
 }
